@@ -37,13 +37,13 @@ CREATE TABLE event_portal.events (
     url VARCHAR(2048),
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
-    address VARCHAR(300) NOT NULL
+    address VARCHAR(300) NOT NULL,
     address2 VARCHAR(300),
     city CHAR(100) NOT NULL,
     state CHAR(100) NOT NULL,
     postal_code CHAR(100) NOT NULL,
     PRIMARY KEY (event_id),
-    FOREIGN KEY (admin_id) REFERENCES event_portal.users(user_id),  
+    FOREIGN KEY (admin_id) REFERENCES event_portal.users(user_id)
 );
 ```
 
