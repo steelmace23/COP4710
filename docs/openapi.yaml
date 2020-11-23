@@ -147,7 +147,7 @@ paths:
                 properties:
                   event:
                     $ref: '#/components/schemas/event'
-        '401':
+        '404':
           description: >
             An event with the given id does not exist
           content:
