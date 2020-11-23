@@ -1,0 +1,269 @@
+openapi: 3.0.3
+servers: 
+  - url: 'eventportal.para.cx/api/'
+    description: Production server
+info:
+  version: "0.1.0"
+  title: EventPortal API
+  contact:
+    email: keenan.turley@gmail.com
+    name: Keenan Turley
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  description: "A REST API that facilitates the basic CRUD operations necessary for EventPortal clients. "
+tags:
+  - name: Users
+    description: Retrieves and modifies user objects
+  - name: Events
+    description: Retrieves and modifies events
+paths:
+  /createUser.php:
+    post:
+      tags:
+        - Users
+      summary: registers a new user
+      operationId: createUser
+      description: >
+        Creates a user in the database and returns the inserted user object
+      requestBody:
+        description: > 
+          An object containing the new user's desired username, and 
+          password
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  $ref: '#/components/schemas/user/properties/username'
+                password:
+                  type: string
+                  minLength: 4
+                  example: hunter2
+      responses:
+        '200':
+          description: >
+            A success message and a user object containing relevant information to store locally
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account created successfully
+                  user:
+                    $ref: '#/components/schemas/user'
+        '409':
+          description: The username is already taken
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+        '400':
+          description: >
+            The given username or password is invalid (failing constraint tests)
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+  /login.php:
+    post:
+      tags:
+        - Users
+      summary: attempts to log a user in
+      operationId: login
+      description: >
+        Attempts to log a user in given their username and password
+      requestBody:
+        description: > 
+          An object containing the new user's desired username, and 
+          password
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  $ref: '#/components/schemas/user/properties/username'
+                password:
+                  type: string
+                  minLength: 4
+                  example: hunter2
+      responses:
+        '200':
+          description: >
+            A user object containing relevant information to store locally
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/user'
+        '401':
+          description: >
+            The given username or password is invalid (user doesn't exist or password is incorrect)
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+  /getEvent.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves an event by event_id
+      operationId: getEvent
+      description: >
+        Retrieves the event identified by the given event_id
+      parameters:
+        - name: id
+          in: query
+          description: id of event to retrieve
+          required: true
+          schema:
+            $ref: '#/components/schemas/event/properties/event_id'
+      responses:
+        '200':
+          description: >
+            The event object matching this id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: '#/components/schemas/event'
+        '401':
+          description: >
+            An event with the given id does not exist
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+      security:
+        - basicAuth: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: >
+        Username and password values belonging to the requester must be sent in
+        the Authorization header of the request, in the following format
+        'Basic <username> <password>'
+  schemas:
+    user:
+      type: object
+      required:
+        - user_id
+        - username
+        - is_superadmin
+      properties:
+        user_id:
+          type: integer
+          example: 12
+        username:
+          type: string
+          pattern: '^[a-zA-Z0-9]*$'
+          minLength: 3
+          maxLength: 20
+          example: 'Danny451'
+        is_superadmin:
+          type: boolean
+          example: false
+    event:
+      type: object
+      required:
+        - event_id
+        - admin_id
+        - title
+        - start_time
+        - end_time
+        - address
+        - city
+        - state
+        - postal_code
+      properties:
+        event_id:
+          type: integer
+          example: 432
+        admin_id:
+          $ref: '#/components/schemas/user/properties/user_id'
+        title:
+          type: string
+          maxLength: 100
+          example: 'My Event'
+        description:
+          type: string
+          maxLength: 2000
+          example: >
+            This event is being hosted to commemorate the very special legacy of events we've had
+            in the past. This event is open to all those who desire to register. We welcome people
+            from all walks of life, and we hope to see you here when we begin the ceremonies.
+            Please do not hesitate to reach out on our website to get more specific information 
+            regarding parking, catering, or any other issues we can help with. We hope to see you there!
+        url:
+          type: string
+          maxLength: 2048
+          example: 'https://www.myeventsite.com/index.html'
+        start_time:
+          type: string
+          format: date-time
+          example: '2020-11-20T05:21:02Z'
+        end_time:
+          type: string
+          format: date-time
+          example: '2020-12-01T00:00:00Z'
+        address:
+          type: string
+          maxLength: 300
+          example: '123 Main St.'
+        address2:
+          type: string
+          maxLength: 300
+          example: 'Apt. 304B'
+        city:
+          type: string
+          maxLength: 100
+          example: 'Denver'
+        state:
+          type: string
+          maxLength: 100
+          example: 'Colorado'
+        postal_code:
+          type: string
+          maxLength: 12
+    registration:
+      type: object
+      required:
+        - user_id
+        - event_id
+        - time
+      properties:
+        user_id:
+          $ref: '#/components/schemas/user/properties/user_id'
+        event_id:
+          $ref: '#/components/schemas/event/properties/event_id'
+        time:
+          type: string
+          format: date-time
+          example: '2020-11-20T05:21:02Z'
+    error:
+      type: string
+      example: Relevant user-friendly error message
