@@ -22,7 +22,8 @@ CREATE TABLE event_portal.users (
     username CHAR(20) NOT NULL UNIQUE,
     password_hash CHAR(100) NOT NULL,
     is_superadmin BOOLEAN NOT NULL,
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (user_id),
+    INDEX (username)
 );
 ```
 
