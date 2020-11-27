@@ -1,13 +1,6 @@
 <?php
 
-// Utility function to return a json response
-// containing an error message and appropriate
-// HTTP response code.
-function error($code, $message) {
-    http_response_code($code);	
-    $response = [ 'error' => $message ];
-    exit(json_encode($response));
-}
+include 'util.php';
 
 // Ensure the request is sent via a POST request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
