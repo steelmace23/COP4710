@@ -88,9 +88,7 @@ else
     }
     
     if ($result->num_rows > 0)
-    {
-        counter = 0;
-        
+    {        
         // Create a JSON friendly response to send back to client-side with requested info
         while($row = $result->fetch_object())
         {
