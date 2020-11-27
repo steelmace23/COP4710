@@ -6,7 +6,7 @@
    
     // Ensure the request is sent via a GET request
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-        error(400, 'Invalid request method');
+        returnWithError(error(400, 'Invalid request method'));
     }
 
     $inData = getRequestInfo();
@@ -132,4 +132,3 @@
 	{
 		sendResultInfoAsJson( $retValue );
 	}
-?>
