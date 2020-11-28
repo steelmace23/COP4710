@@ -77,10 +77,12 @@ else
             
             if ($result->num_rows > 0)
             {        
+                $searchResults = array();
+
                 // Create a JSON friendly response to send back to client-side with requested info
-                while($row = $result->fetch_object())
+                while($row = $result->fetch_assoc())
                 {
-                    $searchResults[] = array( 'event' => $row );
+                    $searchResults[] = $row;
                 }
                 
                 returnWithInfo( $searchResults );
@@ -122,5 +124,5 @@ function returnWithError( $err )
 
 function returnWithInfo( $searchResults )
 {
-    sendResultInfoAsJson( $retValue );
+    sendResultInfoAsJson( $searchResults );
 }
