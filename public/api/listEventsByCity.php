@@ -22,10 +22,10 @@ if ($conn->connect_error)
 else
 {
     // Create an sql form to send to databse
-    $sql = "select * from `Events`" ;
+    $sql = "select * from `events`" ;
 
     // UserID is required in order to search the current user's contacts
-    if ($username != '') 
+    if ($city != '') 
     {
         $sql .= "where `city` =" . $city;
     }

@@ -21,7 +21,7 @@ if ($conn->connect_error)
 else
 {
     // Create an sql form to send to databse
-    $sql = "select * from `Users`" ;
+    $sql = "select * from `users`" ;
 
     // UserID is required in order to search the current user's contacts
     if ($username != '') 
@@ -41,7 +41,7 @@ else
         $user_id = $row["user_id"];
 
         // Create an sql form to send to databse
-        $sql = "select * from `Registrations`" ;
+        $sql = "select * from `registrations`" ;
 
         // UserID is required in order to search the current user's contacts
         if ($user_id != '') 
@@ -61,7 +61,7 @@ else
             $event_id = $row["event_id"];
 
             // Create an sql form to send to databse
-            $sql = "select * from `Registrations`" ;
+            $sql = "select * from `events`" ;
 
             // UserID is required in order to search the current user's contacts
             if ($user_id != '') 
