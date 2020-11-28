@@ -44,13 +44,13 @@ else
         $sql = "select * from `events`" ;
 
         // UserID is required in order to search the current user's contacts
-        if ($user_id != '') 
+        if ($admin_id != '') 
         {
             $sql .= "where `admin_id` =" . $admin_id;
         }
         else 
         {
-            returnWithError('NO EVENT ID');
+            returnWithError('NO ADMIN ID');
         }       
     
         $result = $conn->query($sql);
