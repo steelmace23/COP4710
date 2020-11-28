@@ -40,7 +40,6 @@ else
     {        
         $searchResults = array();
 
-        // Create a JSON friendly response to send back to client-side with requested info
         while($row = $result->fetch_assoc())
         {
             $searchResults[] = $row;
