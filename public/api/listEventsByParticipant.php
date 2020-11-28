@@ -9,9 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     error(400, 'Invalid request method');
 }
 
-$inData = getRequestInfo();
-
-$username = $inData["username"];
+$username = filter_input(INPUT_GET, 'username', FILTER_VALIDATE_STRING);
 
 $db_user = getenv('DB_USER');
 $db_pass = getenv('DB_PASS');

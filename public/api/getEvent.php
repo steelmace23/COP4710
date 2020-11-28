@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     error(400, 'Invalid request method');
 }
 
-$username = filter_input(INPUT_GET, 'username', FILTER_VALIDATE_STRING);
+$event_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 // Validate input
 if (!$event_id) {
@@ -46,7 +46,6 @@ $event_row = $result->fetch_object();
 
 $response = [ 'event' => $event_row ];
 
-header('Content-Type: application/json');
 echo json_encode($response);
 
 $stmt->close();
