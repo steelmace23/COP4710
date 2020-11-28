@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     error(400, 'Invalid request method');
 }
 
-$event_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$username = filter_input(INPUT_GET, 'username', FILTER_VALIDATE_STRING);
 
 // Validate input
 if (!$event_id) {

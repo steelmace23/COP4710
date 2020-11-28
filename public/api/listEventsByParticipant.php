@@ -77,31 +77,27 @@ else
         
             $result = $conn->query($sql);
             
-            
-
+            if ($result->num_rows > 0)
+            {        
+                // Create a JSON friendly response to send back to client-side with requested info
+                while($row = $result->fetch_object())
+                {
+                    $searchResults[] = array( 'event' => $event_row );
+                }
+                
+                returnWithInfo( $searchResults );
+            }
+            else
+            {
+                returnWithError( "No Records Found" );
+            }
+            $conn->close();
         }
-
     }
     else
     {
         returnWithError( "No Records Found" );
-    }
-    
-    if ($result->num_rows > 0)
-    {        
-        // Create a JSON friendly response to send back to client-side with requested info
-        while($row = $result->fetch_object())
-        {
-            $searchResults[] = array( 'event' => $event_row );
-        }
-        
-        returnWithInfo( $searchResults );
-    }
-    else
-    {
-        returnWithError( "No Records Found" );
-    }
-    $conn->close();
+    }       
 }
 
 function getRequestInfo()
