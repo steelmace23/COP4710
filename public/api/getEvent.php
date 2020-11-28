@@ -46,6 +46,7 @@ $event_row = $result->fetch_object();
 
 $response = [ 'event' => $event_row ];
 
+header('Content-Type: application/json');
 echo json_encode($response);
 
 $stmt->close();

@@ -62,6 +62,7 @@ $user = [
 
 $response = [ 'user' => $user ];
 
+header('Content-Type: application/json');
 echo json_encode($response);
 
 $stmt->close();
