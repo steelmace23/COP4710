@@ -9,11 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     error(400, 'Invalid request method');
 }
 
-$city = filter_input(INPUT_GET, 'city', FILTER_VALIDATE_STRING);
+$city = filter_input(INPUT_GET, 'city');
 
 $db_user = getenv('DB_USER');
 $db_pass = getenv('DB_PASS');
 $conn = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
+
 if ($conn->connect_error) 
 {
     returnWithError( $conn->connect_error );
@@ -34,8 +35,6 @@ else
     }       
         
     $result = $conn->query($sql);       
-
-    
         
     if ($result->num_rows > 0)
     {        
@@ -51,14 +50,7 @@ else
     {
         returnWithError( "No Records Found" );
     }
-    $conn->close();
-
-    }
-    else
-    {
-        returnWithError( "No Records Found" );
-    }    
-   
+    $conn->close();  
 }
 
 function getRequestInfo()
