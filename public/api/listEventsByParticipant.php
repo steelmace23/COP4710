@@ -80,7 +80,7 @@ else
                 // Create a JSON friendly response to send back to client-side with requested info
                 while($row = $result->fetch_object())
                 {
-                    $searchResults[] = array( 'event' => $event_row );
+                    $searchResults[] = array( 'event' => $row );
                 }
                 
                 returnWithInfo( $searchResults );

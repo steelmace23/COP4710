@@ -39,9 +39,9 @@ else
     if ($result->num_rows > 0)
     {        
         // Create a JSON friendly response to send back to client-side with requested info
-        while($row = $result->fetch_object())
+        while($row = $result->fetch_assoc())
         {
-            $searchResults[] = array( 'event' => $event_row );
+            $searchResults[] = array( 'event' => $row );
         }
         
         returnWithInfo( $searchResults );
