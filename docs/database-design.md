@@ -32,7 +32,7 @@ CREATE TABLE event_portal.users (
 ```sql
 CREATE TABLE event_portal.events (
     event_id INT NOT NULL AUTO_INCREMENT UNIQUE,
-    admin_id INT NOT NULL UNIQUE,
+    admin_id INT NOT NULL,
     title CHAR(100) NOT NULL,
     description VARCHAR(2000),
     url VARCHAR(2048),
