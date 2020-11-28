@@ -6,6 +6,7 @@
 function error($code, $message) {
     http_response_code($code);	
     $response = [ 'error' => $message ];
+    header('Content-Type: application/json');
     exit(json_encode($response));
 }
 
@@ -17,7 +18,11 @@ function authenticate_user() {
         error(500, 'Could not access request headers');
     }
     
-    $auth_header = apache_request_headers()['Authorization'];
+    // Fix the header case
+    $headers = array_change_key_case(apache_request_headers());
+
+    $auth_header = $headers['authorization'];
+    
     // Header doesn't begin with 'Basic '
     if (substr($auth_header, 0, 6) !== 'Basic ') {
         error(400, 'Invalid HTTP Authorization header format. Basic type required');
