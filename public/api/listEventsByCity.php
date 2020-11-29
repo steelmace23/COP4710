@@ -27,7 +27,7 @@ else
     // UserID is required in order to search the current user's contacts
     if ($city != '') 
     {
-        $sql .= "where `city` like '%" . $city . "%'";
+        $sql .= "where `city` like '%" . $city . "%' and `start_time` <= " . date("Y-m-d") . " and `end_time` >= " .date("Y-m-d");
     }
     else 
     {
