@@ -26,7 +26,7 @@ else
     // UserID is required in order to search the current user's contacts
     if ($username != '') 
     {
-        $sql .= "where `username` like '%" . $username . "%'";
+        $sql .= "where `username` like '$username'";
     }
     else 
     {
