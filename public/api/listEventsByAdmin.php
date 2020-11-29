@@ -33,58 +33,49 @@ else
         returnWithError('NO USERNAME');
     }       
         
-    $users = $conn->query($sql);       
+    $result = $conn->query($sql);       
 
-    if ($users->num_rows > 0)
+    if ($result->num_rows > 0)
     {
-        $row = $users->fetch_assoc();
-        $user_id = $row["user_id"];
+        $row = $result->fetch_assoc();
+        $admin_id = $row["user_id"];
 
         // Create an sql form to send to databse
-        $sql = "select * from `registrations`" ;
+        $sql = "select * from `events`" ;
 
         // UserID is required in order to search the current user's contacts
-        if ($user_id != '') 
+        if ($admin_id != '') 
         {
-            $sql .= "where `user_id` =" . $user_id;
+            $sql .= "where `admin_id` =" . $admin_id;
         }
         else 
         {
-            returnWithError('NO User ID');
+            returnWithError('NO ADMIN ID');
         }       
     
-        $eventList = $conn->query($sql);
+        $result = $conn->query($sql);
         
-        if ($eventList->num_rows > 0)
+        if ($result->num_rows > 0)
         {        
-            $events = array();
+            $searchResults = array();
 
-            while($row = $eventList->fetch_assoc())
+            while($row = $result->fetch_assoc())
             {
-                $event_id= $row["event_id"];
-
-                $sql = "select * from `events`" ;
-
-                if ($event_id != '') 
-                {
-                    $sql .= "where `event_id` =" . $event_id;
-                    $event = $conn->query($sql);
-
-                    $events[] = $event->fetch_assoc();                    
-                }                
-            }            
-            returnWithInfo( $events );
+                $searchResults[] = $row;
+            }
+            
+            returnWithInfo( $searchResults );
         }
         else
         {
-            returnWithError( "No UserID found" );
+            returnWithError( "No Records Found" );
         }
         $conn->close();
         
     }
     else
     {
-        returnWithError( "No UserID found" );
+        returnWithError( "No Records Found" );
     }       
 }
 
