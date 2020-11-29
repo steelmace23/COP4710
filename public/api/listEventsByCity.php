@@ -30,7 +30,7 @@ else
         $date = date("Y-m-d h:i:s", time());
 
         // SELECT * FROM `events` WHERE `city` like 'orlando' and (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
-        $sql .= " where `city` like '%" . $city . "%' ";
+        $sql .= " where `city` like '%" . $city . "%' and (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')";
         // and (`start_time` <= '%" . $date . "%') and (`end_time` >= '%" . $date . "%')";
     }
     else 
