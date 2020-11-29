@@ -52,7 +52,7 @@ else
     }
     else
     {
-        returnWithError( "No Records Found" );
+        returnWithError( $date );
     }
     $conn->close();  
 }
