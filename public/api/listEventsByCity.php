@@ -27,12 +27,11 @@ else
     // UserID is required in order to search the current user's contacts
     if ($city != '') 
     {
-        $testdate = "2020-11-29";
-        $date = date('Y-m-d', strtotime($testdate));
+        $tempDate = date('Y-m-d h:i:s', time());
+        $date = date('Y-m-d h:i:s', strtotime($tempDate));
 
         // SELECT * FROM `events` WHERE `city` like 'orlando' and (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
         $sql .= " where `city` like '$city' and (`start_time` <= '$date') and (`end_time` >= '$date')";
-        // and (`start_time` <= '%" . $date . "%') and (`end_time` >= '%" . $date . "%')";
     }
     else 
     {
@@ -54,7 +53,7 @@ else
     }
     else
     {
-        returnWithError( $date );
+        returnWithError( "NO DATA FOUND" );
     }
     $conn->close();  
 }
