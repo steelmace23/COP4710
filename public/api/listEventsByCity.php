@@ -27,7 +27,8 @@ else
     // UserID is required in order to search the current user's contacts
     if ($city != '') 
     {
-        $sql .= "where `city` like '%" . $city . "%' and `start_time` <= " . date("Y-m-d") . " and `end_time` >= " .date("Y-m-d");
+        // SELECT * FROM `events` WHERE `city` like 'orlando' and (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
+        $sql .= "where `city` like '%" . $city . "%' and `start_time` <= '%" . date("Y-m-d") . "%' and `end_time` >= '%" . date("Y-m-d") . "%'";
     }
     else 
     {
