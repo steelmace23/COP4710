@@ -18,7 +18,7 @@ if ($mysqli->connect_errno) {
 }
 
 // Get the event row by id
-$query = 'SELECT * FROM `events`';
+$query = 'SELECT * FROM `events` ORDER BY `start_time`';
 if (!($stmt = $mysqli->prepare($query))) {
     error(500, 'Failed to prepare query');
 }
