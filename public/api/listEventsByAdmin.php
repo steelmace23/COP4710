@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 // Filter possible inputs
 $username = filter_input(INPUT_GET, 'username');
 $user_id = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
-$onlyActive = filter_input(INPUT_GET, 'onlyActive', FILTER_FILTER_VALIDATE_BOOLEAN);
+$onlyActive = filter_input(INPUT_GET, 'onlyActive', FILTER_VALIDATE_BOOLEAN);
 
 // Validate inputs
 if (!$username && !$user_id) {
@@ -36,7 +36,7 @@ if ($username) {
 $query = 'SELECT * FROM `events` WHERE `admin_id` = ?';
 
 if ($onlyActive) {
-    $query = $query . ' AND `start_time` <= NOW() AND `end_time` > NOW()';
+    $query = $query . ' AND (`start_time` <= NOW()) AND `end_time` > NOW()';
 }
 
 $query = $query . ' ORDER BY `start_time`';
