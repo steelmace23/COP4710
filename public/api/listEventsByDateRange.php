@@ -16,7 +16,7 @@ $end_time = filter_input(INPUT_GET, 'end');
 // Connect to the MySQL server
 $db_user = getenv('DB_USER');
 $db_pass = getenv('DB_PASS');
-$mysqli = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
+$conn = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
 
 if ($mysqli->connect_errno) {
     error(500, 'Failed to connect to database');
