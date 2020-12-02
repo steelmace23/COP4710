@@ -29,9 +29,9 @@ else
     // UserID is required in order to search the current user's contacts
     if ($start_time != '' && $end_time != '') 
     {
-        $tempStart = strtotime($start_time)
+        $tempStart = strtotime($start_time);
         $start = date('Y-m-d',$tempStart);
-        $tempEnd = strtotime($end_time)
+        $tempEnd = strtotime($end_time);
         $end = date('Y-m-d',$tempEnd);
         
         // SELECT * FROM `events` WHERE (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
