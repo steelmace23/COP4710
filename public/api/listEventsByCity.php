@@ -10,77 +10,49 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 $city = filter_input(INPUT_GET, 'city');
+$onlyActive = filter_input(INPUT_GET, 'onlyActive', FILTER_VALIDATE_BOOLEAN);
 
+// Validate inputs
+if (!$city) {
+    error(400, 'Invalid request parameters: city required');
+}
+
+// Connect to the MySQL server
 $db_user = getenv('DB_USER');
 $db_pass = getenv('DB_PASS');
-$conn = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
-
-if ($conn->connect_error) 
-{
-    returnWithError( $conn->connect_error );
-} 
-else
-{
-    // Create an sql form to send to databse
-    $sql = "select * from `events`" ;
-
-    // UserID is required in order to search the current user's contacts
-    if ($city != '') 
-    {
-        $tempDate = date('Y-m-d h:i:s', time());
-        $date = date('Y-m-d h:i:s', strtotime($tempDate));
-
-        // SELECT * FROM `events` WHERE `city` like 'orlando' and (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
-        $sql .= " where `city` like '$city' and (`start_time` <= '$date') and (`end_time` >= '$date')";
-    }
-    else 
-    {
-        returnWithError('NO CITY');
-    }       
-        
-    $result = $conn->query($sql);       
-        
-    if ($result->num_rows > 0)
-    {        
-        $searchResults = array();
-
-        while($row = $result->fetch_assoc())
-        {
-            $searchResults[] = $row;
-        }
-        
-        returnWithInfo( $searchResults );
-    }
-    else
-    {
-        returnWithError( "NO DATA FOUND" );
-    }
-    $conn->close();  
+$mysqli = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
+if ($mysqli->connect_errno) {
+    error(500, 'Failed to connect to database');
 }
 
-function getRequestInfo()
-{
-    return json_decode(file_get_contents('php://input'), true);
+// Build the query
+$query = 'SELECT * FROM `events` WHERE `city` LIKE ?';
+
+if ($onlyActive) {
+    $query = $query . ' AND (`start_time` <= NOW()) AND `end_time` > NOW()';
 }
 
-function sendResultInfoAsJson( $obj )
-{
-    echo json_encode($obj);
+$query = $query . ' ORDER BY `start_time`';
+
+// Prepare the query
+if (!($stmt = $mysqli->prepare($query))) {
+    error(500, 'Failed to prepare query');
 }
 
-function returnWithSuccess( $success )
-{
-    $retValue = '{"success":"' . $success . '"}';
-    sendResultInfoAsJson( $retValue );
+// Bind parameter before execution
+$stmt->bind_param('s', $city);
+
+$success = $stmt->execute();
+if (!$success) {
+    error(500, 'Error querying database for events');
 }
 
-function returnWithError( $err )
-{
-    $retValue = '{"error":"' . $err . '"}';
-    sendResultInfoAsJson( $retValue );
-}
+$result = $stmt->get_result();
+$rows = $result->fetch_all(MYSQLI_ASSOC);
 
-function returnWithInfo( $searchResults )
-{
-    sendResultInfoAsJson( $searchResults );
-}
+$response = [ 'events' => $rows ];
+
+header('Content-Type: application/json');
+echo json_encode($response);
+
+$stmt->close();
