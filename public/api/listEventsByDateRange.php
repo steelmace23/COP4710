@@ -35,7 +35,7 @@ else
         $end = date('Y-m-d',$tempEnd);
         
         // SELECT * FROM `events` WHERE (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
-        $sql .= " where (`start_time` <= '$start') and (`end_time` >= '$end')";
+        $sql .= " where (`start_time` >= '$start') and (`end_time` <= '$end')";
     }
     else 
     {
