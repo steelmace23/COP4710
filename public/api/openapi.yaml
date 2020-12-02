@@ -1,9 +1,9 @@
 openapi: 3.0.3
-servers: 
-  - url: 'eventportal.para.cx/api/'
+servers:
+  - url: eventportal.para.cx/api/
     description: Production server
 info:
-  version: "0.1.0"
+  version: 0.2.0
   title: EventPortal API
   contact:
     email: keenan.turley@gmail.com
@@ -11,12 +11,14 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  description: "A REST API that facilitates the basic CRUD operations necessary for EventPortal clients. "
+  description: 'A REST API that facilitates the basic CRUD operations necessary for EventPortal clients. '
 tags:
   - name: Users
     description: Retrieves and modifies user objects
   - name: Events
     description: Retrieves and modifies events
+  - name: Registrations
+    description: Facilitates relationships between Users and Events
 paths:
   /createUser.php:
     post:
@@ -24,12 +26,11 @@ paths:
         - Users
       summary: registers a new user
       operationId: createUser
-      description: >
+      description: |
         Creates a user in the database and returns the inserted user object
       requestBody:
-        description: > 
-          An object containing the new user's desired username, and 
-          password
+        description: |
+          An object containing the new user's desired username, and  password
         content:
           application/json:
             schema:
@@ -46,7 +47,7 @@ paths:
                   example: hunter2
       responses:
         '200':
-          description: >
+          description: |
             A success message and a user object containing relevant information to store locally
           content:
             application/json:
@@ -58,17 +59,17 @@ paths:
                     example: Account created successfully
                   user:
                     $ref: '#/components/schemas/user'
-        '409':
-          description: The username is already taken
+        '400':
+          description: |
+            The given username or password is invalid (failing constraint tests)
           content:
             application/json:
               schema:
                 properties:
                   error:
                     $ref: '#/components/schemas/error'
-        '400':
-          description: >
-            The given username or password is invalid (failing constraint tests)
+        '409':
+          description: The username is already taken
           content:
             application/json:
               schema:
@@ -81,12 +82,11 @@ paths:
         - Users
       summary: attempts to log a user in
       operationId: login
-      description: >
+      description: |
         Attempts to log a user in given their username and password
       requestBody:
-        description: > 
-          An object containing the new user's desired username, and 
-          password
+        description: |
+          An object containing the new user's desired username, and  password
         content:
           application/json:
             schema:
@@ -103,7 +103,7 @@ paths:
                   example: hunter2
       responses:
         '200':
-          description: >
+          description: |
             A user object containing relevant information to store locally
           content:
             application/json:
@@ -113,8 +113,80 @@ paths:
                   user:
                     $ref: '#/components/schemas/user'
         '401':
-          description: >
+          description: |
             The given username or password is invalid (user doesn't exist or password is incorrect)
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+  /createEvent.php:
+    post:
+      tags:
+        - Events
+      summary: Creates a new event
+      operationId: createEvent
+      description: |
+        Creates an event in the database and returns the inserted event object
+      security:
+        - basicAuth: []
+      requestBody:
+        description: |
+          An object containing the new event's related information
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - admin_id
+                - title
+                - start_time
+                - end_time
+                - address
+                - city
+                - state
+                - postal_code
+              properties:
+                admin_id:
+                  $ref: '#/components/schemas/user/properties/user_id'
+                title:
+                  $ref: '#/components/schemas/event/properties/title'
+                description:
+                  $ref: '#/components/schemas/event/properties/description'
+                url:
+                  $ref: '#/components/schemas/event/properties/url'
+                start_time:
+                  $ref: '#/components/schemas/event/properties/start_time'
+                end_time:
+                  $ref: '#/components/schemas/event/properties/end_time'
+                address:
+                  $ref: '#/components/schemas/event/properties/address'
+                address2:
+                  $ref: '#/components/schemas/event/properties/address2'
+                city:
+                  $ref: '#/components/schemas/event/properties/city'
+                state:
+                  $ref: '#/components/schemas/event/properties/state'
+                postal_code:
+                  $ref: '#/components/schemas/event/properties/postal_code'
+      responses:
+        '200':
+          description: |
+            A success message and a user object containing relevant information to store locally
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Event created successfully
+                  event:
+                    $ref: '#/components/schemas/event'
+        '400':
+          description: |
+            The request body is illformed
           content:
             application/json:
               schema:
@@ -127,7 +199,7 @@ paths:
         - Events
       summary: Retrieves an event by event_id
       operationId: getEvent
-      description: >
+      description: |
         Retrieves the event identified by the given event_id
       parameters:
         - name: id
@@ -138,7 +210,7 @@ paths:
             $ref: '#/components/schemas/event/properties/event_id'
       responses:
         '200':
-          description: >
+          description: |
             The event object matching this id
           content:
             application/json:
@@ -148,7 +220,7 @@ paths:
                   event:
                     $ref: '#/components/schemas/event'
         '404':
-          description: >
+          description: |
             An event with the given id does not exist
           content:
             application/json:
@@ -158,15 +230,327 @@ paths:
                     $ref: '#/components/schemas/error'
       security:
         - basicAuth: []
+  /listEvents.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves all events
+      operationId: listEvents
+      description: |
+        Retrieves all Events
+      parameters: []
+      responses:
+        '200':
+          description: |
+            An array of events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/event'
+      security:
+        - basicAuth: []
+  /listEventsByAdmin.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves all events a given user created
+      operationId: listEventsByAdmin
+      description: |
+        Retrieves all Events created by a particular user.
+        The user can be queried via `username` or `user_id`.
+        
+        Additionally, an optional `onlyActive` flag can be set, filtering 
+        the list of events to only those that are currently ongoing.
+        (The event has already started but has not yet ended)
+        
+        One of `username` or `user_id` must be provided.
+      parameters: 
+        - name: username
+          in: query
+          description: Username of the requested admin
+          required: false
+          schema:
+            $ref: '#/components/schemas/user/properties/username'
+        - name: user_id
+          in: query
+          description: User id of the requested admin
+          required: false
+          schema:
+            $ref: '#/components/schemas/user/properties/user_id'
+        - name: onlyActive
+          in: query
+          description: |
+            Only returns active events. The false value of this parameter does not change the output
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: |
+            An array of events created by the given user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/event'
+        '400':
+          description: |
+            Input format is incorrect
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'   
+      security:
+        - basicAuth: []
+  /listEventsByCity.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves all events located in a given city
+      operationId: listEventsByCity
+      description: |
+        Retrieves all Events being hosted in a given city.
+        An optional `onlyActive` flag can be set, filtering 
+        the list of events to only those that are currently ongoing.
+        (The event has already started but has not yet ended)
+      parameters: 
+        - name: city
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/event/properties/city'
+        - name: onlyActive
+          in: query
+          description: |
+            Only returns active events. The false value of this parameter does not change the output
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: |
+            An array of events in the given city
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/event'
+        '400':
+          description: |
+            Input format is incorrect
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+      security:
+        - basicAuth: []
+  /listEventsByParticipant.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves all events a particular user is registered for
+      operationId: listEventsByParticipant
+      description: |
+        Retrieves all Events that a given user is registered for.
+      parameters: 
+        - name: username
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/user/properties/username'
+      responses:
+        '200':
+          description: |
+            An array of events in the user is registered for
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/event'
+        '400':
+          description: |
+            Input format is incorrect
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+      security:
+        - basicAuth: []
+  /listEventsByDateRange.php:
+    get:
+      tags:
+        - Events
+      summary: Retrieves all events that start within a given date range
+      operationId: listEventsByDateRange
+      description: |
+        Retrieves all Events that begin within the given start and end time. (Inclusive)
+        
+        The query parameters should be in the format YYYY-MM-DD.
+      parameters: 
+        - name: start
+          description: The left bound of search range
+          in: query
+          required: true
+          schema:
+            type: string
+            description: test
+            example: '2020-11-29'
+        - name: end
+          description: The right bound of search range
+          in: query
+          required: true
+          schema:
+            type: string
+            description: test
+            example: '2020-12-01'
+      responses:
+        '200':
+          description: |
+            An array of events that start within the date range
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/event'
+        '400':
+          description: |
+            Input format is incorrect
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+      security:
+        - basicAuth: []
+  /createRegistration.php:
+    post:
+      tags:
+        - Registrations
+      summary: Registers a user for an event
+      operationId: createRegistration
+      description: |
+        Creates a registration in the database
+      security:
+        - basicAuth: []
+      requestBody:
+        description: |
+          An object containing the user's id and the event id to register them for
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - event_id
+              properties:
+                user_id:
+                  $ref: '#/components/schemas/registration/properties/user_id'
+                event_id:
+                  $ref: '#/components/schemas/registration/properties/event_id'
+      responses:
+        '200':
+          description: |
+            A success message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: Registration created successfully
+        '400':
+          description: |
+            The given user_id or event_id is invalid
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
+  /unregisterFromEvent.php:
+    post:
+      tags:
+        - Registrations
+      summary: Unregisters a user for an event
+      operationId: unregisterFromEvent
+      description: |
+        Removes a registration in the database
+      security:
+        - basicAuth: []
+      requestBody:
+        description: |
+          An object containing the user's id and the event id to unregister them from
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - event_id
+              properties:
+                user_id:
+                  $ref: '#/components/schemas/registration/properties/user_id'
+                event_id:
+                  $ref: '#/components/schemas/registration/properties/event_id'
+      responses:
+        '200':
+          description: |
+            A success message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: Registration created successfully
+        '400':
+          description: |
+            The given user_id or event_id is invalid
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    $ref: '#/components/schemas/error'
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
-      description: >
-        Username and password values belonging to the requester must be sent in
-        the Authorization header of the request, in the following format
-        'Basic <username> <password>'
+      description: |
+        Username and password values belonging to the requester must be sent in the Authorization header of the request, in the following format 'Basic <username> <password>'
   schemas:
     user:
       type: object
@@ -183,7 +567,7 @@ components:
           pattern: '^[a-zA-Z0-9]*$'
           minLength: 3
           maxLength: 20
-          example: 'Danny451'
+          example: Danny451
         is_superadmin:
           type: boolean
           example: false
@@ -208,16 +592,11 @@ components:
         title:
           type: string
           maxLength: 100
-          example: 'My Event'
+          example: My Event
         description:
           type: string
           maxLength: 2000
-          example: >
-            This event is being hosted to commemorate the very special legacy of events we've had
-            in the past. This event is open to all those who desire to register. We welcome people
-            from all walks of life, and we hope to see you here when we begin the ceremonies.
-            Please do not hesitate to reach out on our website to get more specific information 
-            regarding parking, catering, or any other issues we can help with. We hope to see you there!
+          example: "This event is being hosted to commemorate the very special legacy of events we've had in the past. This event is open to all those who desire to register. We welcome people from all walks of life, and we hope to see you here when we begin the ceremonies. Please do not hesitate to reach out on our website to get more specific information regarding parking, catering, or any other issues we can help with. We hope to see you there!"
         url:
           type: string
           maxLength: 2048
@@ -233,22 +612,23 @@ components:
         address:
           type: string
           maxLength: 300
-          example: '123 Main St.'
+          example: 123 Main St.
         address2:
           type: string
           maxLength: 300
-          example: 'Apt. 304B'
+          example: Apt. 304B
         city:
           type: string
           maxLength: 100
-          example: 'Denver'
+          example: Denver
         state:
           type: string
           maxLength: 100
-          example: 'Colorado'
+          example: Colorado
         postal_code:
           type: string
           maxLength: 12
+          example: "33516"
     registration:
       type: object
       required:
