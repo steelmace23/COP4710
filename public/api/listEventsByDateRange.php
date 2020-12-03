@@ -9,82 +9,45 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     error(400, 'Invalid request method');
 }
 
-// change 'start' and 'end' if query input is modified
-$start_time = filter_input(INPUT_GET, 'start');
-$end_time = filter_input(INPUT_GET, 'end');
+$start = filter_input(INPUT_GET, 'start');
+$end = filter_input(INPUT_GET, 'end');
+
+// Attempt to create dates and validate them
+$start_date = DateTimeImmutable::createFromFormat('Y-m-d', $start);
+if (!$start_date) {
+    error(400, 'Invalid start date format: YYYY-MM-DD required');
+}
+$end_date = DateTimeImmutable::createFromFormat('Y-m-d', $end);
+if (!$end_date) {
+    error(400, 'Invalid end date format: YYYY-MM-DD required');
+}
 
 // Connect to the MySQL server
 $db_user = getenv('DB_USER');
 $db_pass = getenv('DB_PASS');
-$conn = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
-
+$mysqli = new mysqli('localhost', $db_user, $db_pass, 'event_portal');
 if ($mysqli->connect_errno) {
     error(500, 'Failed to connect to database');
 }
-else
-{
-    // Create an sql form to send to databse
-    $sql = "select * from `events`" ;
-
-    // UserID is required in order to search the current user's contacts
-    if ($start_time != '' && $end_time != '') 
-    {
-        $tempStart = strtotime($start_time);
-        $start = date('Y-m-d',$tempStart);
-        $tempEnd = strtotime($end_time);
-        $end = date('Y-m-d',$tempEnd);
-        
-        // SELECT * FROM `events` WHERE (`start_time` <= '2020-11-29') and (`end_time` >= '2020-11-29')
-        $sql .= " where (`start_time` >= '$start') and (`end_time` <= '$end')";
-    }
-    else 
-    {
-        returnWithError('NO EVENTS');
-    }       
-        
-    $result = $conn->query($sql);       
-        
-    if ($result->num_rows > 0)
-    {        
-        $searchResults = array();
-
-        while($row = $result->fetch_assoc())
-        {
-            $searchResults[] = $row;
-        }
-        
-        returnWithInfo( $searchResults );
-    }
-    else
-    {
-        returnWithError( "NO DATA FOUND" );
-    }
-    $conn->close();  
+// Create an sql form to send to databse
+$query = 'SELECT * FROM `events` WHERE `start_time` >= ? AND `end_time` <= ? ORDER BY `start_time`';
+if (!($stmt = $mysqli->prepare($query))) {
+    error(500, 'Failed to prepare query');
 }
 
-function getRequestInfo()
-{
-    return json_decode(file_get_contents('php://input'), true);
-}
+$start_date_string = $start_date->format('Y-m-d');
+$end_date_string = $end_date->format('Y-m-d');
 
-function sendResultInfoAsJson( $obj )
-{
-    echo json_encode($obj);
+$stmt->bind_param('ss', $start_date_string, $end_date_string);
+$success = $stmt->execute();
+if (!$success) {
+    error(500, 'Error querying database for given event id');
 }
+    
+$result = $stmt->get_result();
+$rows = $result->fetch_all(MYSQLI_ASSOC);
 
-function returnWithSuccess( $success )
-{
-    $retValue = '{"success":"' . $success . '"}';
-    sendResultInfoAsJson( $retValue );
-}
+$response = [ 'events' => $rows ];
 
-function returnWithError( $err )
-{
-    $retValue = '{"error":"' . $err . '"}';
-    sendResultInfoAsJson( $retValue );
-}
-
-function returnWithInfo( $searchResults )
-{
-    sendResultInfoAsJson( $searchResults );
-}
+header('Content-Type: application/json');
+echo json_encode($response);
