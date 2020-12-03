@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@500;700&display=swap');
+
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body
+{
+  background-color: #edf0f5;
+}
+
+h1
+{
+  padding: 23px;
+  background-color: #3b5998;
+  color: white;
+  font-family: Exo, sans-serif;
+  /*add some font fixing*/
+}
+
+input
+{
+  margin-top: 5px;
+}
+
+#loginDiv
+{
+  font-size: 20px;
+  margin-top: 10px;
+  margin-left: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#createAccount
+{
+  font-size: 35px;
+  margin-top: 20px;
+  text-align: center;
+  font-family: Exo, sans-serif;
+}
+
+#showCreateAccount
+{
+  text-align: center;
+}
+
+#inner-title
+{
+  margin-left: 5px;
+}
+
+#signUp
+{
+  font-size: 30px;
+  padding: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#data
+{
+  font-size: 17px;
+  padding: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#loginButton
+{
+  background-color: #4267b2;
+  color: white;
+  font-size: 15px;
+  width: 5%;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#createAccountButton
+{
+  background-color: #5e974b;
+  color: white;
+  font-size: 25px;
+  border-radius: 5px;
+  width: 20%;
+  margin-left: 10px;
+  margin-top: 20px;
+  font-family: Exo, sans-serif;
+}
+
+#showCreate
+{
+  background-color: #5e974b;
+  color: white;
+  font-size: 25px;
+  border-radius: 5px;
+  width: 20%;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#logoutButton
+{
+  background-color: #4267b2;
+  color: white;
+  font-size: 15px;
+  width: 4%;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+#Events
+{
+  font-size: 20px;
+  margin-top: 10px;
+  margin-left: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#displayAddContact
+{
+  background-color: #5e974b;
+  color: white;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 12%;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#addContactButton
+{
+  background-color: #5e974b;
+  color: white;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 12%;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#editButton
+{
+  background-color: #4267b2;
+  color: white;
+  font-size: 15px;
+  width: 4%;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#finishEdit
+{
+  background-color: #5e974b;
+  color: white;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 12%;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#searchButton
+{
+  background-color: #4267b2;
+  color: white;
+  font-size: 15px;
+  width: 10%;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#deleteButton
+{
+  background-color: #4267b2;
+  color: white;
+  font-size: 15px;
+  width: 4%;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-family: Exo, sans-serif;
+}
+
+#expect
+{
+  margin-left: 30%;
+  margin-top: 5%;
+  border: 10px solid white;
+  width: 40%;
+  height: auto;
+}
+
+#consume
+{
+  margin-left: 30%;
+  border: 10px solid white;
+  width: 40%;
+  height: auto;
+}
+
+#loginButton:hover
+{
+  background-color: #2f4a81;
+}
+
+#createAccountButton:hover
+{
+  background-color: #67ac54;
+}
+
+#showCreate:hover
+{
+  background-color: #67ac54;
+}
+
+
+
+.buttons:hover
+{
+  cursor: pointer;
+}
