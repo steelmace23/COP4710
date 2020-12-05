@@ -13,6 +13,12 @@ function error($code, $message) {
 // Very pedantic function that attempts to validate and authenticate the 
 // request with HTTP basic authentication.
 function authenticate_user() {
+    // Support CORS preflight requests by exiting successfully on OPTIONS requests
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {    
+        header('Access-Control-Allow-Headers: Authorization');
+        exit(204);    
+    }  
+
     // Access the request headers
     if (!apache_request_headers()) {
         error(500, 'Could not access request headers');
