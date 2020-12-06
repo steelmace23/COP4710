@@ -30,7 +30,7 @@ if ($mysqli->connect_errno) {
     error(500, 'Failed to connect to database');
 }
 // Create an sql form to send to databse
-$query = 'SELECT * FROM `events` WHERE `start_time` >= ? AND `end_time` <= ? ORDER BY `start_time`';
+$query = 'SELECT * FROM `events` WHERE DATE(`start_time`) >= ? AND DATE(`end_time`) <= ? ORDER BY `start_time`';
 if (!($stmt = $mysqli->prepare($query))) {
     error(500, 'Failed to prepare query');
 }
