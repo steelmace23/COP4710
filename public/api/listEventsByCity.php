@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $city = filter_input(INPUT_GET, 'city');
 $onlyActive = filter_input(INPUT_GET, 'onlyActive', FILTER_VALIDATE_BOOLEAN);
+// User ID to check for event registrations
+$registrant_id = filter_input(INPUT_GET, 'registrant_id');
 
 // Validate inputs
 if (!$city) {
@@ -26,21 +28,22 @@ if ($mysqli->connect_errno) {
 }
 
 // Build the query
-$query = 'SELECT * FROM `events` WHERE `city` LIKE ?';
-
-if ($onlyActive) {
-    $query = $query . ' AND (`start_time` <= NOW()) AND `end_time` > NOW()';
+if ($onlyActive && $registrant_id) {
+    $query = 'SELECT E.*, IF( EXISTS( SELECT * FROM `registrations` AS R WHERE R.`event_id` = E.`event_id` AND R.`user_id` = ? ), 1, 0 ) AS `registered` FROM (SELECT * FROM `events` WHERE `city` LIKE ? AND (`start_time` <= NOW()) AND `end_time` > NOW()) AS E ORDER BY E.`start_time` ASC;';
+} else {    
+    $query = 'SELECT * FROM `events` WHERE `city` LIKE ? ORDER BY `start_time`;';
 }
-
-$query = $query . ' ORDER BY `start_time`';
 
 // Prepare the query
 if (!($stmt = $mysqli->prepare($query))) {
     error(500, 'Failed to prepare query');
 }
 
-// Bind parameter before execution
-$stmt->bind_param('s', $city);
+if ($onlyActive && $registrant_id) {
+    $stmt->bind_param('is', $registrant_id, $city);
+} else {    
+    $stmt->bind_param('s', $city);
+}
 
 $success = $stmt->execute();
 if (!$success) {
