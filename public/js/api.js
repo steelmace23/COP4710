@@ -76,10 +76,14 @@ const API = {
         return await authenticatedRequest(user, path);
     },
     
-    listEvents: async (user) => {
+    listEvents: async (user, onlyActive, registrantId) => {
         const endpoint = 'listEvents.php';
-        const path = `${API_PATH}/${endpoint}`;
+        let path = `${API_PATH}/${endpoint}?onlyActive=${onlyActive}`;
     
+        if (registrantId) {
+            path += `&registrant_id=${registrantId}`;
+        }
+
         return await authenticatedRequest(user, path);
     },
     

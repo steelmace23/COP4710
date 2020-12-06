@@ -64,6 +64,7 @@ import API from './api.js';
     const table = new Tabulator('#participant-table', {
         layout: 'fitColumns',
         placeholder: 'No events found.',
+        data: (await API.listEvents(user, false, user.user_id)).events,
         columns: [
             { title: 'Title', field: 'title' },
             { title: 'URL', field: 'url' },
