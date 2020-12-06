@@ -37,7 +37,6 @@ const loadP = async () => {
 	layout:"fitColumns",
     columns:[                 //define the table columns
         {title:"Event", field:"title"},
-		{title:"Admin", field:"admin_id"},
         {title:"Description", field:"description", hozAlign:"left"},
         {title:"URL", field:"url"},
         {title:"Start Time", field:"start_time"},
@@ -51,7 +50,7 @@ const loadP = async () => {
 loadP();
 
 const search = async () => {
-  const endpoint = 'listEventsByAdmin.php'
+  const endpoint = 'listEventsByParticipant.php'
   document.getElementById("demo").innerHTML = "";
   
   //Authorization
@@ -66,7 +65,7 @@ const search = async () => {
   
   
  
-	const requestPath = `${apiPath}/${endpoint}?user_id=${newUsername}`;
+	const requestPath = `${apiPath}/${endpoint}?username=${newUsername}`;
 	
  
   const response = await fetch(requestPath, {
@@ -91,7 +90,6 @@ const search = async () => {
 	layout:"fitColumns",
     columns:[                 //define the table columns
         {title:"Event", field:"title"},
-		{title:"Admin", field:"admin_id"},
         {title:"Description", field:"description", hozAlign:"left"},
         {title:"URL", field:"url"},
         {title:"Start Time", field:"start_time"},
