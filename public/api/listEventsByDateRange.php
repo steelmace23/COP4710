@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $start = filter_input(INPUT_GET, 'start');
 $end = filter_input(INPUT_GET, 'end');
+// User ID to check for event registrations
+$registrant_id = filter_input(INPUT_GET, 'registrant_id');
 
 // Attempt to create dates and validate them
 $start_date = DateTimeImmutable::createFromFormat('Y-m-d', $start);
@@ -30,7 +32,11 @@ if ($mysqli->connect_errno) {
     error(500, 'Failed to connect to database');
 }
 // Create an sql form to send to databse
-$query = 'SELECT * FROM `events` WHERE DATE(`start_time`) >= ? AND DATE(`end_time`) <= ? ORDER BY `start_time`';
+if ($registrant_id) {
+    $query = 'SELECT E.*, IF( EXISTS( SELECT * FROM `registrations` AS R WHERE R.`event_id` = E.`event_id` AND R.`user_id` = ? ), 1, 0 ) AS `registered` FROM (SELECT * FROM `events` WHERE DATE(`start_time`) >= ? AND DATE(`end_time`) <= ?) AS E ORDER BY E.`start_time` ASC;';
+} else {
+    $query = 'SELECT * FROM `events` WHERE DATE(`start_time`) >= ? AND DATE(`end_time`) <= ? ORDER BY `start_time`';
+}
 if (!($stmt = $mysqli->prepare($query))) {
     error(500, 'Failed to prepare query');
 }
@@ -38,7 +44,11 @@ if (!($stmt = $mysqli->prepare($query))) {
 $start_date_string = $start_date->format('Y-m-d');
 $end_date_string = $end_date->format('Y-m-d');
 
-$stmt->bind_param('ss', $start_date_string, $end_date_string);
+if ($registrant_id) {
+    $stmt->bind_param('iss', $registrant_id, $start_date_string, $end_date_string);
+} else {
+    $stmt->bind_param('ss', $start_date_string, $end_date_string);
+}
 $success = $stmt->execute();
 if (!$success) {
     error(500, 'Error querying database for given event id');
