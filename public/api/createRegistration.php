@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $inData = getRequestInfo();
 
 $user_id = filter_var($inData['user_id'], FILTER_VALIDATE_INT);
-$event_id = filter_input($inData['event_id'], FILTER_VALIDATE_INT);
+$event_id = filter_var($inData['event_id'], FILTER_VALIDATE_INT);
 
 // Validate input
 if (!$user_id || !$event_id) {
