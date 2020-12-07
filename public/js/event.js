@@ -1,6 +1,8 @@
 import API from './api.js';
 import { getUser, logoutUser } from './util.js';
 
+const API_KEY = 'AIzaSyAOuR-9F5jTi3cDj6T46C6DyBp3mXxaisw';
+
 const getClickableLink = link => {
     if (!link) return '';
     if (link.startsWith('http://') || link.startsWith('https://')) {
@@ -22,6 +24,14 @@ const displayEvent = (event) => {
     ${event.city}, ${event.state} ${event.postal_code}`;
 
     document.getElementById('address').innerText = formattedAddress;
+
+    const mapQuery = encodeURIComponent(`${event.address}, ${event.city}, ${event.state} ${event.postal_code}`);
+    document.getElementById('map').innerHTML = `<iframe
+        width="100%"
+        height="450"
+        frameborder="0" style="border:0"
+        src="https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${mapQuery}" allowfullscreen>
+        </iframe>`;
 }
 
 // Async wrapper - I wish I didn't have to do this
