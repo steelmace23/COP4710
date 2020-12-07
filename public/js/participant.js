@@ -4,6 +4,7 @@ import { getUser, logoutUser } from './util.js';
 // Async wrapper - I wish I didn't have to do this
 (async () => {
 
+    // Redirect the user to the login page if they're not logged in
     const user = getUser();
     if (!user) {
         window.location.href = './login.html';
@@ -13,7 +14,12 @@ import { getUser, logoutUser } from './util.js';
     logoutButton.addEventListener('click', () => {
         logoutUser();
         window.location.href = './login.html';
-    })
+    });
+
+    // Only show the super admin link if the user is a superadmin
+    if (user.is_superadmin) {
+        document.getElementById('super-admin-link').classList.remove('d-none');
+    }
 
     const createRegistrationButton = (onClick, registered, disabled) => {
         const button = document.createElement('button');
@@ -49,7 +55,7 @@ import { getUser, logoutUser } from './util.js';
         const rowData = cell.getRow().getData();
         const endDate = Date.parse(rowData.end_time.replace(' ', 'T'));
         const eventIsOver = Date.now() > endDate;
-        
+
         const isRegistered = cell.getValue();
 
         if (isRegistered === undefined) {
@@ -72,7 +78,10 @@ import { getUser, logoutUser } from './util.js';
         data: (await API.listEvents(user, false, user.user_id)).events,
         columns: [
             { title: 'Title', field: 'title' },
-            { title: 'URL', field: 'url' },
+            {
+                title: 'URL', field: 'url', formatter: 'link', formatterParams:
+                    { urlPrefix: 'http://', target: '_blank' }
+            },
             { title: 'Start Time', field: 'start_time', sorter: 'date' },
             { title: 'End Time', field: 'end_time', sorter: 'date' },
             { title: 'Location', field: 'city' },

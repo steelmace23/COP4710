@@ -1,104 +1,81 @@
-const apiPath ='https://eventportal.para.cx/api';
+import API from './api.js';
+import { getUser, logoutUser } from './util.js';
 
+// Async wrapper - I wish I didn't have to do this
+(async () => {
 
-   const username = 'keenan';
-   const password = 'testing';
-
-const loadP = async () => {
-	
-  const endpoint = 'listEvents.php'
-  const requestPath = `${apiPath}/${endpoint}`;
-  
-  //Authorization
-  const createAuthorizationHeader = (username, password) => {
-      // I use template literal here
-      const credential = btoa(`${username}:${password}`);
-      const authValue = `Basic ${credential}`;
-      return new Headers({ 'Authorization': authValue });
+    // Redirect the user to the login page if they're not logged in
+    const user = getUser();
+    if (!user) {
+        window.location.href = './login.html';
     }
 
-  const response = await fetch(requestPath, {
-        method: 'GET', // Change this on POST requests
-		headers: createAuthorizationHeader(username, password)
+    // Redirect the user to the participant page if they aren't a superadmin
+    if (!user.is_superadmin) {
+        window.location.href = './participant.html'
+    }
+
+    const logoutButton = document.getElementById('logout-button');
+    logoutButton.addEventListener('click', () => {
+        logoutUser();
+        window.location.href = './login.html';
     });
-    // We need to await here as well because .json() returns a Promise
-    const data = await response.json();
 
-    // Response code is outside HTTP 200-299, therefore its an error
-    if (!response.ok) {
-        return console.log(`Error: ${data.error}`);
-    }
-	console.log(data.event);
-	console.log(data);
-	
-		var table = new Tabulator("#supAdmin-table", {
-	height:"311px",
-	data: data.events,
-	layout:"fitColumns",
-    columns:[                 //define the table columns
-        {title:"Event", field:"title"},
-		{title:"Admin", field:"admin_id"},
-        {title:"Description", field:"description", hozAlign:"left"},
-        {title:"URL", field:"url"},
-        {title:"Start Time", field:"start_time"},
-        {title:"End Time", field:"end_time"},
-        {title:"Location", field:"city"},
-        
-    ],
-});
-	
-}
-loadP();
-
-const search = async () => {
-  const endpoint = 'listEventsByAdmin.php'
-  document.getElementById("demo").innerHTML = "";
-  
-  //Authorization
-  const createAuthorizationHeader = (username, password) => {
-      // I use template literal here
-      const credential = btoa(`${username}:${password}`);
-      const authValue = `Basic ${credential}`;
-      return new Headers({ 'Authorization': authValue });
-    }
-
-  var newUsername = document.getElementById("searchBar").value;
-  
-  
- 
-	const requestPath = `${apiPath}/${endpoint}?user_id=${newUsername}`;
-	
- 
-  const response = await fetch(requestPath, {
-        method: 'GET', // Change this on POST requests
-		headers: createAuthorizationHeader(username, password)
+    // Immediately create the table
+    const table = new Tabulator('#super-admin-table', {
+        layout: 'fitColumns',
+        placeholder: 'No events found.',
+        data: (await API.listEvents(user, false, user.user_id)).events,
+        columns: [
+            { title: 'ID', field: 'event_id', width: 50 },
+            { title: 'Title', field: 'title' },
+            {
+                title: 'URL', field: 'url', formatter: 'link', formatterParams:
+                    { urlPrefix: 'http://', target: '_blank' }
+            },
+            { title: 'Start Time', field: 'start_time' },
+            { title: 'End Time', field: 'end_time' },
+            { title: 'Location', field: 'city' },
+        ]
     });
-    // We need to await here as well because .json() returns a Promise
-    const data = await response.json();
 
-    // Response code is outside HTTP 200-299, therefore its an error
-    if (!response.ok) {
-		document.getElementById("demo").innerHTML = "Please enter an Admin_ID (number)";
-        return console.log(`Error: ${data.error}`);
-		 
-    }
-	console.log(data.event);
-	console.log(data);
-	
-		var table = new Tabulator("#supAdmin-table", {
-	height:"311px",
-	data: data.events,
-	layout:"fitColumns",
-    columns:[                 //define the table columns
-        {title:"Event", field:"title"},
-		{title:"Admin", field:"admin_id"},
-        {title:"Description", field:"description", hozAlign:"left"},
-        {title:"URL", field:"url"},
-        {title:"Start Time", field:"start_time"},
-        {title:"End Time", field:"end_time"},
-        {title:"Location", field:"city"},
-        
-    ],
-});
-	
-}
+    // -- Handlers --
+    // Search by time range
+    const startDateElement = document.getElementById('start-date');
+    const endDateElement = document.getElementById('end-date');
+    const searchDateRangeButton = document.getElementById('search-date-range');
+    searchDateRangeButton.addEventListener('click', async (e) => {
+        const data = await API.listEventsByDateRange(
+            user, startDateElement.value, endDateElement.value, user.user_id
+        );
+
+        // Display an error if one occurred. Otherwise, remove the error.
+        if (data.error) {
+            document.getElementById('error-alert').classList.remove('d-none');
+            document.getElementById('error-message').innerText = data.error;
+            return;
+        }
+        document.getElementById('error-alert').classList.add('d-none');
+
+        table.setData(data.events);
+    });
+
+    // Search by city 
+    const cityElement = document.getElementById('city');
+    const searchCityButton = document.getElementById('search-city');
+    searchCityButton.addEventListener('click', async (e) => {
+        const data = await API.listEventsByCity(
+            user, cityElement.value, user.user_id
+        );
+
+        // Display an error if one occurred. Otherwise, remove the error.
+        if (data.error) {
+            document.getElementById('error-alert').classList.remove('d-none');
+            document.getElementById('error-message').innerText = data.error;
+            return;
+        }
+        document.getElementById('error-alert').classList.add('d-none');
+
+        table.setData(data.events);
+    });
+})();
