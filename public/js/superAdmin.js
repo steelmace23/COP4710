@@ -40,13 +40,12 @@ import { getUser, logoutUser } from './util.js';
     });
 
     // -- Handlers --
-    // Search by time range
-    const startDateElement = document.getElementById('start-date');
-    const endDateElement = document.getElementById('end-date');
-    const searchDateRangeButton = document.getElementById('search-date-range');
-    searchDateRangeButton.addEventListener('click', async (e) => {
-        const data = await API.listEventsByDateRange(
-            user, startDateElement.value, endDateElement.value, user.user_id
+    // Search by admin username 
+    const adminUsernameElement = document.getElementById('admin-username');
+    const searchAdminButton = document.getElementById('search-admin');
+    searchAdminButton.addEventListener('click', async (e) => {
+        const data = await API.listEventsByAdmin(
+            user, adminUsernameElement.value, false
         );
 
         // Display an error if one occurred. Otherwise, remove the error.
@@ -61,11 +60,11 @@ import { getUser, logoutUser } from './util.js';
     });
 
     // Search by city 
-    const cityElement = document.getElementById('city');
-    const searchCityButton = document.getElementById('search-city');
-    searchCityButton.addEventListener('click', async (e) => {
-        const data = await API.listEventsByCity(
-            user, cityElement.value, user.user_id
+    const participantUsernameElement = document.getElementById('participant-username');
+    const searchParticipantButton = document.getElementById('search-participant');
+    searchParticipantButton.addEventListener('click', async (e) => {
+        const data = await API.listEventsByParticipant(
+            user, participantUsernameElement.value
         );
 
         // Display an error if one occurred. Otherwise, remove the error.
@@ -76,6 +75,6 @@ import { getUser, logoutUser } from './util.js';
         }
         document.getElementById('error-alert').classList.add('d-none');
 
-        table.setData(data.events);
+        table.setData(data);
     });
 })();
