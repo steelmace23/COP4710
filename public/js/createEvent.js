@@ -9,9 +9,22 @@ const apiPath ='https://eventportal.para.cx/api';
         password: 'testing',
         user_id: 31
     };
-
+	document.getElementById("event-title").value = "";
+	document.getElementById("description").value = "";
+	document.getElementById("url").value = "";
+	document.getElementById("start").value = "";
+	document.getElementById("end").value = "";
+	document.getElementById("address").value = "";
+	document.getElementById("address2").value = "";
+	document.getElementById("city").value = "";
+	document.getElementById("state").value = "";
+	document.getElementById("postalcode").value = "";
 
     const onClickCreate = async () => {
+		const endpoint = 'createEvent.php'
+		const requestPath = `${apiPath}/${endpoint}`;
+		
+		
 	var title = document.getElementById("event-title").value;
 	var description = document.getElementById("description").value;
 	var url = document.getElementById("url").value;
@@ -22,9 +35,6 @@ const apiPath ='https://eventportal.para.cx/api';
 	var city = document.getElementById("city").value;
 	var state = document.getElementById("state").value;
 	var postal = document.getElementById("postalcode").value;
-	
-	
-	
 	
 	
 	
@@ -58,4 +68,4 @@ const apiPath ='https://eventportal.para.cx/api';
     }
 
 
-}
+})();
