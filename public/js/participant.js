@@ -1,14 +1,19 @@
 import API from './api.js';
+import { getUser, logoutUser } from './util.js';
 
 // Async wrapper - I wish I didn't have to do this
 (async () => {
 
-    // Constants
-    const user = {
-        username: 'keenan',
-        password: 'testing',
-        user_id: 31
-    };
+    const user = getUser();
+    if (!user) {
+        window.location.href = './login.html';
+    }
+
+    const logoutButton = document.getElementById('logout-button');
+    logoutButton.addEventListener('click', () => {
+        logoutUser();
+        window.location.href = './login.html';
+    })
 
     const createRegistrationButton = (onClick, registered, disabled) => {
         const button = document.createElement('button');

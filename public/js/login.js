@@ -34,7 +34,7 @@ loginButton.addEventListener('click', async () => {
         }
 
         console.log(response);
-        const user = { ...(response.data), password };
+        const user = { ...(response.user), password };
         setUser(user);
 
         // Redirect the user to the participant dashboard

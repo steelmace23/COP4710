@@ -7,6 +7,10 @@ const setUser = (user) => {
     localStorage.setItem('user', JSON.stringify(user));
 }
 
+const logoutUser = () => {
+    localStorage.removeItem('user');
+}
+
 /**
  * Validates the a form element using the Constraints API's checkValidity(),
  * then adds Bootstrap's was-validated class to enable styling.
@@ -17,4 +21,4 @@ const validateForm = (formElement) => {
     return isValid;
 }
 
-export { getUser, setUser, validateForm };
+export { getUser, setUser, logoutUser, validateForm };
