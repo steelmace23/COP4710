@@ -9,11 +9,16 @@ import { getUser, logoutUser } from './util.js';
         window.location.href = './login.html';
     }
 
+    // Only show the super admin link if the user is a superadmin
+    if (user.is_superadmin) {
+        document.getElementById('super-admin-link').classList.remove('d-none');
+    }
+
     const logoutButton = document.getElementById('logout-button');
     logoutButton.addEventListener('click', () => {
         logoutUser();
         window.location.href = './login.html';
-    })
+    });
 
     const onlyActiveCheckbox = document.getElementById('only-active-checkbox');
 
@@ -24,10 +29,13 @@ import { getUser, logoutUser } from './util.js';
         data: (await API.listEventsByAdmin(user, user.username, onlyActiveCheckbox.checked)).events,
         columns: [
             { title: 'Title', field: 'title' },
-            { title: 'URL', field: 'url' },
-            { title: 'Start Time', field: 'start_time', sorter: 'date' },
-            { title: 'End Time', field: 'end_time', sorter: 'date' },
-            { title: 'Location', field: 'city' }
+            {
+                title: 'URL', field: 'url', formatter: 'link', formatterParams:
+                    { urlPrefix: 'http://', target: '_blank' }
+            },
+            { title: 'Start Time', field: 'start_time' },
+            { title: 'End Time', field: 'end_time' },
+            { title: 'Location', field: 'city' },
         ]
     });
 
