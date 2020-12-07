@@ -1,5 +1,5 @@
 import API from './api.js';
-import { getUser, logoutUser } from './util.js';
+import { getUser, logoutUser, eventTitleFormatter } from './util.js';
 
 // Async wrapper - I wish I didn't have to do this
 (async () => {
@@ -28,7 +28,7 @@ import { getUser, logoutUser } from './util.js';
         placeholder: 'No events found.',
         data: (await API.listEventsByAdmin(user, user.username, onlyActiveCheckbox.checked)).events,
         columns: [
-            { title: 'Title', field: 'title' },
+            { title: 'Title', field: 'title', formatter: eventTitleFormatter },
             {
                 title: 'URL', field: 'url', formatter: 'link', formatterParams:
                     { urlPrefix: 'http://', target: '_blank' }

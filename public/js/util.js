@@ -21,4 +21,11 @@ const validateForm = (formElement) => {
     return isValid;
 }
 
-export { getUser, setUser, logoutUser, validateForm };
+const eventTitleFormatter = (cell, formatterParams, onRendered) => {
+    // Check if the event has already ended
+    const event = cell.getRow().getData();
+    const eventId = event.event_id;
+    return `<a href=./event.html?id=${eventId} target="_blank">${event.title}</a>`;
+};
+
+export { getUser, setUser, logoutUser, validateForm, eventTitleFormatter };
