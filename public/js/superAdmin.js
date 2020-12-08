@@ -1,5 +1,5 @@
 import API from './api.js';
-import { eventTitleFormatter, getUser, logoutUser } from './util.js';
+import { eventTitleFormatter, getUser, logoutUser, getClickableLink } from './util.js';
 
 // Async wrapper - I wish I didn't have to do this
 (async () => {
@@ -31,7 +31,7 @@ import { eventTitleFormatter, getUser, logoutUser } from './util.js';
             { title: 'Title', field: 'title', formatter: eventTitleFormatter },
             {
                 title: 'URL', field: 'url', formatter: 'link', formatterParams:
-                    { urlPrefix: 'http://', target: '_blank' }
+                    { url: (cell) => getClickableLink(cell.getValue()), target: '_blank' }
             },
             { title: 'Start Time', field: 'start_time' },
             { title: 'End Time', field: 'end_time' },

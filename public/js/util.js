@@ -28,4 +28,12 @@ const eventTitleFormatter = (cell, formatterParams, onRendered) => {
     return `<a href=./event.html?id=${eventId} target="_blank">${event.title}</a>`;
 };
 
-export { getUser, setUser, logoutUser, validateForm, eventTitleFormatter };
+const getClickableLink = link => {
+    if (!link) return '';
+    if (link.startsWith('http://') || link.startsWith('https://')) {
+        return link;
+    }
+    return `http://${link}`;
+};
+
+export { getUser, setUser, logoutUser, validateForm, eventTitleFormatter, getClickableLink };

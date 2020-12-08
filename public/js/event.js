@@ -1,15 +1,7 @@
 import API from './api.js';
-import { getUser, logoutUser } from './util.js';
+import { getUser, logoutUser, getClickableLink } from './util.js';
 
 const API_KEY = 'AIzaSyAOuR-9F5jTi3cDj6T46C6DyBp3mXxaisw';
-
-const getClickableLink = link => {
-    if (!link) return '';
-    if (link.startsWith('http://') || link.startsWith('https://')) {
-        return link;
-    }
-    return `http://${link}`;
-};
 
 const displayEvent = (event) => {
     document.getElementById('title').innerText = event.title;
