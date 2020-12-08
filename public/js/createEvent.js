@@ -10,6 +10,11 @@ import { getUser, validateForm } from './util.js';
         window.location.href = './login.html';
     }
 
+    // Redirect the user to the participant dashboard if they aren't a superadmin
+    if (!user.is_superadmin) {
+        window.location.href = './patcipant.html';
+    }
+
     const logoutButton = document.getElementById('logout-button');
     logoutButton.addEventListener('click', () => {
         logoutUser();
