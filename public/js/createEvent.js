@@ -10,10 +10,11 @@ import { getUser, validateForm } from './util.js';
         window.location.href = './login.html';
     }
 
-    // Redirect the user to the participant dashboard if they aren't a superadmin
-    if (!user.is_superadmin) {
-        window.location.href = './patcipant.html';
-    }
+    // Show the user's name in the top right
+    const usernameNavElement = document.getElementById('username-nav');
+    const usernameElement = document.getElementById('username');
+    usernameElement.innerText = user.username;
+    usernameNavElement.classList.remove('d-none');
 
     const logoutButton = document.getElementById('logout-button');
     logoutButton.addEventListener('click', () => {

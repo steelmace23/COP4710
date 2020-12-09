@@ -15,6 +15,12 @@ import { eventTitleFormatter, getUser, logoutUser, getClickableLink } from './ut
         window.location.href = './participant.html'
     }
 
+    // Show the user's name in the top right
+    const usernameNavElement = document.getElementById('username-nav');
+    const usernameElement = document.getElementById('username');
+    usernameElement.innerText = user.username;
+    usernameNavElement.classList.remove('d-none');
+    
     const logoutButton = document.getElementById('logout-button');
     logoutButton.addEventListener('click', () => {
         logoutUser();
